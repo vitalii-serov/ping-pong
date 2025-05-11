@@ -3,10 +3,11 @@ from random import randint
 from time import time as timer
 
 font.init()
-font1 = font.SysFont('Arial', 80)
-win = font1.render('YOU WIN!', True, (255, 255, 255))
-lose = font1.render('YOU LOSE!', True, (180, 0, 0))
-
+font1 = font.Font(None, 35)
+lose1 = font1.render('PLAYER 1 LOSE!', True, (180, 0, 0))
+lose2 = font1.render('PLAYER 2 LOSE!', True, (180, 0, 0))
+speed_x = 3
+speed_y = 3
 
 font2 = font.SysFont('Arial', 36)
 
@@ -76,7 +77,7 @@ background = transform.scale(image.load(img_back), (win_width, win_height))
 #создаём спрайты
 racket1 = Player(img_hero1, 5, 250, 20, 150, 10)
 racket2 = Player(img_hero2, 680, 250, 20, 150, 10)
-ball = Enemy(ball_img, 250, 350, 100, 100, 100)
+ball = Enemy(ball_img, 250, 350, 80, 80, 100)
 #переменная "игра закончилась": как только там True, в основном цикле перестают работать спрайты
 finish = False
 #основной цикл игры:
@@ -97,17 +98,21 @@ while run:
     if not finish:
         #обновляем фон
         window.blit(background,(0,0))
- 
+        
         #производим движения спрайтов
-        racket1.update1()
-        racket2.update2()
-    
-    
+        racket2.update1()
+        racket1.update2()
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+        if ball.rect.y > win_height-50 or ball.rect.y < 0:
+            speed_y *= -1
+        if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+            speed_x *= -1
             #обновляем их в новом местоположении при каждой итерации цикла
         racket1.reset()    
         racket2.reset()
         ball.reset()
-            #этот цикл повторится столько раз, сколько монстров подбито
+         
 
  
  
@@ -115,8 +120,12 @@ while run:
             
         #возможный проигрыш: пропустили слишком много или герой столкнулся с врагом
   
- 
- 
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(lose1, (200, 200))
+        if ball.rect.x > 700:
+            finish = True
+            window.blit(lose2, (200, 200))
         #проверка выигрыша: сколько очков набрали?
  
  
