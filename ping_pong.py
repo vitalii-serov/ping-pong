@@ -11,9 +11,9 @@ lose = font1.render('YOU LOSE!', True, (180, 0, 0))
 font2 = font.SysFont('Arial', 36)
 
 img_back = "sky.jpeg"
-img_hero = "racket.png"
-
-
+img_hero1 = "racket.png"
+img_hero2 = "racket.png"
+ball_img = "tenis_ball.png"
 
 class GameSprite(sprite.Sprite):
  #конструктор класса
@@ -39,18 +39,19 @@ class GameSprite(sprite.Sprite):
 #класс главного игрока
 class Player(GameSprite):
     #метод для управления спрайтом стрелками клавиатуры
-    def update(self):
+    def update1(self):
         keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.x > 5:
-            self.rect.x -= self.speed
-        if keys[K_RIGHT] and self.rect.x < win_width - 80:
-            self.rect.x += self.speed
+        if keys[K_UP] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys[K_DOWN] and self.rect.y < win_width - 80:
+            self.rect.y += self.speed
+    def update2(self):
+        keys = key.get_pressed()
+        if keys[K_w] and self.rect.y > 5:
+            self.rect.y -= self.speed
+        if keys[K_s] and self.rect.y < win_width - 80:
+            self.rect.y += self.speed
  #метод "выстрел" (используем место игрока, чтобы создать там пулю)
-    def fire(self):
-        global gun_clip
-        bullet = Bullet(img_bullet, self.rect.centerx, self.rect.top, 15, 20, -15)
-        bullets.add(bullet)
-        gun_clip -= 1
 
 
 #класс спрайта-врага  
@@ -73,7 +74,9 @@ window = display.set_mode((win_width, win_height))
 background = transform.scale(image.load(img_back), (win_width, win_height))
 
 #создаём спрайты
-
+racket1 = Player(img_hero1, 5, 250, 20, 150, 10)
+racket2 = Player(img_hero2, 680, 250, 20, 150, 10)
+ball = Enemy(ball_img, 250, 350, 100, 100, 100)
 #переменная "игра закончилась": как только там True, в основном цикле перестают работать спрайты
 finish = False
 #основной цикл игры:
@@ -96,12 +99,14 @@ while run:
         window.blit(background,(0,0))
  
         #производим движения спрайтов
- 
- 
- 
-        #обновляем их в новом местоположении при каждой итерации цикла
-        
-
+        racket1.update1()
+        racket2.update2()
+    
+    
+            #обновляем их в новом местоположении при каждой итерации цикла
+        racket1.reset()    
+        racket2.reset()
+        ball.reset()
             #этот цикл повторится столько раз, сколько монстров подбито
 
  
